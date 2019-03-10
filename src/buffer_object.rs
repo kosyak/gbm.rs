@@ -1,4 +1,4 @@
-use {AsRaw, Device, DeviceDestroyedError, Format};
+use {AsRaw, DeviceDestroyedError, Format};
 
 #[cfg(feature = "drm-support")]
 use drm::buffer::{Buffer as DrmBuffer, Id as DrmId, PixelFormat as DrmPixelFormat};
@@ -11,7 +11,6 @@ use std::ops::{Deref, DerefMut};
 use std::os::unix::io::{AsRawFd, RawFd};
 use std::rc::Weak;
 use std::ptr;
-use std::slice;
 
 /// A gbm buffer object
 pub struct BufferObject<T: 'static> {
@@ -37,8 +36,8 @@ bitflags! {
         /// Buffer can be used for gbm_bo_write.  This is guaranteed to work
         /// with `BufferObjectFlags::Cursor`, but may not work for other combinations.
         const WRITE        = ::ffi::gbm_bo_flags_GBM_BO_USE_WRITE as u32;
-        /// Buffer is linear, i.e. not tiled.
-        const LINEAR       = ::ffi::gbm_bo_flags_GBM_BO_USE_LINEAR as u32;
+        // /// Buffer is linear, i.e. not tiled.
+        // const LINEAR       = ::ffi::gbm_bo_flags_GBM_BO_USE_LINEAR as u32;
     }
 }
 
@@ -304,7 +303,9 @@ impl<T: 'static> BufferObject<T> {
     /// according to the width, height, stride and format of the buffer object.
     pub fn write(&mut self, buffer: &[u8]) -> Result<IoResult<()>, DeviceDestroyedError> {
         if self._device.upgrade().is_some() {
-            let result = unsafe { ::ffi::gbm_bo_write(self.ffi, buffer.as_ptr() as *const _, buffer.len()) };
+            use std::convert::TryInto;
+            
+            let result = unsafe { ::ffi::gbm_bo_write(self.ffi, buffer.as_ptr() as *const _, buffer.len().try_into().unwrap()) };
             if result != 0 {
                 Ok(Err(IoError::last_os_error()))
             } else {
@@ -438,7 +439,7 @@ impl<T: 'static> DrmBuffer for BufferObject<T> {
     }
 
     fn handle(&self) -> DrmId {
-        unsafe { DrmId::from_raw(*self.handle().expect("GbmDevice does not exist anymore").u32.as_ref()) }
+        unsafe { DrmId::from_raw(self.handle().expect("GbmDevice does not exist anymore").u32) }
     }
 }
 
@@ -458,5 +459,5 @@ impl error::Error for WrongDeviceError {
         "The gbm specified is not the one this buffer object belongs to"
     }
 
-    fn cause(&self) -> Option<&error::Error> { None }
+    fn cause(&self) -> Option<&dyn error::Error> { None }
 }

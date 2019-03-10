@@ -69,7 +69,7 @@ impl error::Error for FrontBufferError {
         }
     }
 
-    fn cause(&self) -> Option<&error::Error> {
+    fn cause(&self) -> Option<&dyn error::Error> {
         match *self {
             FrontBufferError::Destroyed(ref err) => Some(err),
             _ => None,
@@ -106,7 +106,7 @@ impl<T: 'static> Surface<T> {
     /// error and may cause undefined behavior.
     pub unsafe fn lock_front_buffer(&self) -> Result<SurfaceBufferHandle<T>, FrontBufferError> {
         if self._device.upgrade().is_some() {
-            if ::ffi::gbm_surface_has_free_buffers(*self.ffi) != 0 {
+            // if ::ffi::gbm_surface_has_free_buffers(*self.ffi) != 0 {
                 let buffer_ptr = ::ffi::gbm_surface_lock_front_buffer(*self.ffi);
                 if !buffer_ptr.is_null() {
                     let buffer = BufferObject::new(buffer_ptr, self._device.clone());
@@ -114,9 +114,9 @@ impl<T: 'static> Surface<T> {
                 } else {
                     Err(FrontBufferError::Unknown)
                 }
-            } else {
-                Err(FrontBufferError::NoFreeBuffers)
-            }
+            // } else {
+            //     Err(FrontBufferError::NoFreeBuffers)
+            // }
         } else {
             Err(FrontBufferError::Destroyed(DeviceDestroyedError))
         }

@@ -2,3 +2,5 @@ target
 .travis.yml
 .rustfmt.toml
 Cargo.lock
+*.iml
+.idea

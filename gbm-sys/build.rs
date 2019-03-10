@@ -15,7 +15,6 @@ fn main()
     // Setup bindings builder
     let generated = bindgen::builder()
         .header("include/gbm.h")
-        .no_unstable_rust()
         .ctypes_prefix("libc")
         .whitelisted_type(r"^gbm_.*$")
         .whitelisted_function(r"^gbm_.*$")
