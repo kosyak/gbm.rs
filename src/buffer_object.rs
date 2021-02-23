@@ -440,7 +440,7 @@ impl<T: 'static> DrmBuffer for BufferObject<T> {
     }
 
     fn handle(&self) -> DrmId {
-        unsafe { DrmId::from_raw(self.handle().expect("GbmDevice does not exist anymore").u32) }
+        unsafe { DrmId::from_raw(self.handle().expect("GbmDevice does not exist anymore").u32_) }
     }
 }
 
