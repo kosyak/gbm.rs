@@ -1,4 +1,4 @@
-use {AsRaw, DeviceDestroyedError, Format};
+use {AsRaw, Device, DeviceDestroyedError, Format};
 
 #[cfg(feature = "drm-support")]
 use drm::buffer::{Buffer as DrmBuffer, Id as DrmId, PixelFormat as DrmPixelFormat};
@@ -11,6 +11,7 @@ use std::ops::{Deref, DerefMut};
 use std::os::unix::io::{AsRawFd, RawFd};
 use std::rc::Weak;
 use std::ptr;
+use std::slice;
 
 /// A gbm buffer object
 pub struct BufferObject<T: 'static> {
@@ -211,7 +212,7 @@ impl<T: 'static> BufferObject<T> {
                 y,
                 width,
                 height,
-                ::ffi::gbm_bo_transfer_flags::GBM_BO_TRANSFER_READ as u32,
+                ::ffi::gbm_bo_transfer_flags_GBM_BO_TRANSFER_READ as u32,
                 &mut stride as *mut _,
                 &mut data as *mut _,
             );
@@ -269,7 +270,7 @@ impl<T: 'static> BufferObject<T> {
                 y,
                 width,
                 height,
-                ::ffi::gbm_bo_transfer_flags::GBM_BO_TRANSFER_READ_WRITE as u32,
+                ::ffi::gbm_bo_transfer_flags_GBM_BO_TRANSFER_READ_WRITE as u32,
                 &mut stride as *mut _,
                 &mut data as *mut _,
             );

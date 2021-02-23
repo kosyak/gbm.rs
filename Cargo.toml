@@ -21,11 +21,11 @@ drm = { git = "https://github.com/kosyak/drm-rs", branch = "master", optional = 
 drm = { git = "https://github.com/kosyak/drm-rs", branch = "master" }
 
 [features]
-default = ["import-wayland", "import-egl", "drm-support"]
+default = ["import-egl", "drm-support"]
 import-wayland = ["wayland-server"]
 import-egl = []
 drm-support = ["drm"]
-gen = ["gbm-sys/gen"]
+gen = ["gbm-sys/gen", "drm/use_bindgen"]
 
 [[example]]
 name = "simple"

@@ -16,9 +16,8 @@ fn main()
     let generated = bindgen::builder()
         .header("include/gbm.h")
         .ctypes_prefix("libc")
-        .whitelisted_type(r"^gbm_.*$")
-        .whitelisted_function(r"^gbm_.*$")
-        .constified_enum("gbm_bo_flags")
+        .whitelist_type(r"^gbm_.*$")
+        .whitelist_function(r"^gbm_.*$")
         .generate()
         .unwrap();
 

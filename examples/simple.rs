@@ -1,7 +1,7 @@
 extern crate drm;
 extern crate gbm;
 
-use drm::control::{crtc, framebuffer, Device as ControlDevice};
+use drm::control::{crtc, framebuffer, Device as ControlDevice, ResourceInfo};
 use gbm::{Device, Format, BufferObjectFlags};
 
 use std::fs::{File, OpenOptions};
@@ -67,11 +67,11 @@ fn main() {
     let res_handles = gbm.resource_handles().unwrap();
     let con = *res_handles.connectors().iter().next().unwrap();
     let crtc_handle = *res_handles.crtcs().iter().next().unwrap();
-    let mode_list = gbm.get_modes(con).unwrap();
-    let mode = mode_list.as_slice().iter().next().unwrap();
+    // let mode_list = card.get_modes(con).unwrap();
+    // let mode = mode_list.as_slice().iter().next().unwrap();
 
     // display it (and get a crtc, mode and connector before)
-    crtc::set(&gbm, crtc_handle, fb_info.handle(), &[con], (0, 0), Some(*mode)).unwrap();
+    crtc::set(&gbm, crtc_handle, fb_info.handle(), &[con], (0, 0), None /*Some(*mode)*/).unwrap();
 }
 
 
